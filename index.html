@@ -1,0 +1,448 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>Форма обратной связи | Проверка данных и приветствие</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            font-family: system-ui, 'Segoe UI', 'Roboto', 'Helvetica Neue', sans-serif;
+        }
+
+        body {
+            background: linear-gradient(145deg, #f5f7fc 0%, #eef2f6 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 2rem 1.5rem;
+            margin: 0;
+        }
+
+        /* карточка формы */
+        .feedback-card {
+            max-width: 620px;
+            width: 100%;
+            background: rgba(255, 255, 255, 0.96);
+            backdrop-filter: blur(0px);
+            border-radius: 2rem;
+            box-shadow: 0 25px 45px -12px rgba(0, 0, 0, 0.25), 0 4px 12px rgba(0, 0, 0, 0.05);
+            padding: 2rem 2rem 2.2rem;
+            transition: all 0.2s ease;
+            border: 1px solid rgba(255, 255, 255, 0.5);
+        }
+
+        h1 {
+            font-size: 1.9rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, #1E2A3E, #2c3e4e);
+            background-clip: text;
+            -webkit-background-clip: text;
+            color: transparent;
+            letter-spacing: -0.3px;
+            margin-bottom: 0.5rem;
+            border-left: 5px solid #f7b32b;
+            padding-left: 1rem;
+        }
+
+        .sub {
+            color: #4a627a;
+            margin-bottom: 1.8rem;
+            font-size: 0.95rem;
+            padding-left: 1.4rem;
+            border-left: 2px solid #cbd5e1;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        label {
+            display: block;
+            font-weight: 600;
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: #2c3e50;
+            margin-bottom: 0.5rem;
+        }
+
+        label span {
+            color: #e03a3a;
+            margin-left: 4px;
+        }
+
+        input, textarea {
+            width: 100%;
+            padding: 0.9rem 1rem;
+            font-size: 1rem;
+            border: 1.5px solid #e2e8f0;
+            border-radius: 1.2rem;
+            background: #ffffff;
+            transition: all 0.2s;
+            outline: none;
+            font-weight: 500;
+            color: #0f172a;
+        }
+
+        input:focus, textarea:focus {
+            border-color: #f7b32b;
+            box-shadow: 0 0 0 3px rgba(247, 179, 43, 0.2);
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        .error-msg {
+            color: #e03a3a;
+            font-size: 0.75rem;
+            margin-top: 0.4rem;
+            margin-left: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            font-weight: 500;
+        }
+
+        .btn-send {
+            background: linear-gradient(100deg, #2c3e50, #1e2a3a);
+            color: white;
+            border: none;
+            font-weight: 700;
+            font-size: 1rem;
+            padding: 0.9rem 1.8rem;
+            border-radius: 2rem;
+            cursor: pointer;
+            width: 100%;
+            transition: 0.2s;
+            box-shadow: 0 6px 14px rgba(0, 0, 0, 0.08);
+            margin-top: 0.5rem;
+            letter-spacing: 0.3px;
+        }
+
+        .btn-send:hover {
+            background: linear-gradient(100deg, #1f2f3f, #111d2b);
+            transform: translateY(-2px);
+            box-shadow: 0 12px 20px -8px rgba(0, 0, 0, 0.2);
+        }
+
+        .btn-send:active {
+            transform: translateY(1px);
+        }
+
+        /* контейнер для приветственного сообщения */
+        .welcome-card {
+            margin-top: 2rem;
+            background: #eef7ef;
+            border-radius: 1.5rem;
+            padding: 1rem 1.4rem;
+            border-left: 6px solid #2e7d32;
+            transition: all 0.2s;
+            word-wrap: break-word;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+        }
+
+        .welcome-card p {
+            margin: 0.5rem 0;
+            font-size: 1rem;
+            color: #1e4620;
+        }
+
+        .welcome-card strong {
+            font-weight: 700;
+            color: #0a2f0c;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        hr {
+            margin: 1rem 0;
+            border: 0;
+            height: 1px;
+            background: linear-gradient(to right, #e0e7ef, transparent);
+        }
+
+        footer {
+            font-size: 0.7rem;
+            text-align: center;
+            margin-top: 1.5rem;
+            color: #6b7f8f;
+        }
+
+        @media (max-width: 500px) {
+            .feedback-card {
+                padding: 1.5rem;
+            }
+            h1 {
+                font-size: 1.6rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="feedback-card">
+    <h1>📬 Обратная связь</h1>
+    <div class="sub">Напишите нам — мы проверим данные и поприветствуем вас</div>
+
+    <!-- форма обратной связи -->
+    <form id="feedbackForm" novalidate>
+        <div class="form-group">
+            <label>Имя <span>*</span></label>
+            <input type="text" id="nameInput" placeholder="Алексей Смирнов" autocomplete="name">
+            <div id="nameError" class="error-msg"></div>
+        </div>
+
+        <div class="form-group">
+            <label>Email <span>*</span></label>
+            <input type="email" id="emailInput" placeholder="hello@example.com" autocomplete="email">
+            <div id="emailError" class="error-msg"></div>
+        </div>
+
+        <div class="form-group">
+            <label>Комментарий <span>*</span></label>
+            <textarea id="commentInput" placeholder="Поделитесь вашим мнением или вопросом..."></textarea>
+            <div id="commentError" class="error-msg"></div>
+        </div>
+
+        <button type="submit" class="btn-send">✉️ Отправить сообщение</button>
+    </form>
+
+    <hr>
+
+    <!-- Динамический блок, куда будет выводиться приветствие с данными -->
+    <div id="welcomeMessageContainer" class="hidden"></div>
+    <footer>🔒 Все поля обязательны, email проверяется на валидность</footer>
+</div>
+
+<script>
+    "use strict";   // строгий режим — улучшает обработку ошибок и безопасность кода
+
+    // --- Получение DOM элементов ---
+    const form = document.getElementById('feedbackForm');
+    const nameInput = document.getElementById('nameInput');
+    const emailInput = document.getElementById('emailInput');
+    const commentInput = document.getElementById('commentInput');
+    
+    // контейнеры для ошибок
+    const nameErrorDiv = document.getElementById('nameError');
+    const emailErrorDiv = document.getElementById('emailError');
+    const commentErrorDiv = document.getElementById('commentError');
+    
+    // контейнер для приветствия (динамический)
+    const welcomeContainer = document.getElementById('welcomeMessageContainer');
+    
+    // --- вспомогательная функция для очистки предыдущих ошибок ---
+    function clearErrors() {
+        nameErrorDiv.innerHTML = '';
+        emailErrorDiv.innerHTML = '';
+        commentErrorDiv.innerHTML = '';
+        // также убираем визуальные рамки ошибок (опционально)
+        nameInput.style.borderColor = '';
+        emailInput.style.borderColor = '';
+        commentInput.style.borderColor = '';
+    }
+    
+    // --- функция валидации email (RFC 2822 совместимая, но простая и надёжная) ---
+    function isValidEmail(email) {
+        // базовая проверка на наличие символов, точки и домена
+        if (!email || typeof email !== 'string') return false;
+        // более точная регулярка, покрывающая большинство реальных email
+        const emailRegex = /^[^\s@]+@([^\s@.,]+\.)+[^\s@.,]{2,}$/;
+        // дополнительно проверяем, что нет пробелов и странных символов в начале/конце
+        const trimmed = email.trim();
+        if (trimmed !== email) return false;
+        return emailRegex.test(email);
+    }
+    
+    // --- функция отображения ошибки под конкретным полем ---
+    function setFieldError(field, errorDiv, message) {
+        if (message) {
+            errorDiv.innerHTML = `⚠️ ${message}`;
+            field.style.borderColor = '#e03a3a';
+        } else {
+            errorDiv.innerHTML = '';
+            field.style.borderColor = '';
+        }
+    }
+    
+    // --- главная логика проверки формы и создания приветствия ---
+    function validateAndGreet(event) {
+        event.preventDefault();   // предотвращаем отправку формы и перезагрузку страницы
+        
+        // 1. Очищаем прошлые ошибки и скрываем старое приветствие (если есть)
+        clearErrors();
+        // скрываем предыдущее приветствие (если оно отображалось)
+        welcomeContainer.classList.add('hidden');
+        welcomeContainer.innerHTML = '';   // чистим содержимое
+        
+        // 2. Получаем значения полей и тримируем (обрезаем пробелы)
+        let nameValue = nameInput.value.trim();
+        let emailValue = emailInput.value.trim();
+        let commentValue = commentInput.value.trim();
+        
+        // флаг, есть ли ошибки валидации
+        let hasErrors = false;
+        
+        // ----- проверка поля "имя" -----
+        if (nameValue === "") {
+            setFieldError(nameInput, nameErrorDiv, "Имя не может быть пустым.");
+            hasErrors = true;
+        } else if (nameValue.length < 2) {
+            setFieldError(nameInput, nameErrorDiv, "Имя должно содержать хотя бы 2 символа.");
+            hasErrors = true;
+        } else if (nameValue.length > 60) {
+            setFieldError(nameInput, nameErrorDiv, "Имя слишком длинное (максимум 60 символов).");
+            hasErrors = true;
+        } else {
+            // дополнительная проверка на недопустимые символы (чисто для эстетики)
+            const nameRegex = /^[a-zA-Zа-яА-ЯёЁ\s\-'.]+$/;
+            if (!nameRegex.test(nameValue)) {
+                setFieldError(nameInput, nameErrorDiv, "Имя может содержать только буквы, пробелы, дефис или апостроф.");
+                hasErrors = true;
+            }
+        }
+        
+        // ----- проверка email -----
+        if (emailValue === "") {
+            setFieldError(emailInput, emailErrorDiv, "Email не может быть пустым.");
+            hasErrors = true;
+        } else if (!isValidEmail(emailValue)) {
+            setFieldError(emailInput, emailErrorDiv, "Введите корректный email адрес (например, name@domain.com).");
+            hasErrors = true;
+        } else {
+            // дополнительно: убедимся, что доменная зона имеет минимум 2 символа после точки
+            const parts = emailValue.split('@');
+            if (parts.length !== 2 || parts[1].split('.').length < 2 || parts[1].endsWith('.')) {
+                setFieldError(emailInput, emailErrorDiv, "Неверный формат домена. Пример: user@example.ru");
+                hasErrors = true;
+            }
+        }
+        
+        // ----- проверка комментария -----
+        if (commentValue === "") {
+            setFieldError(commentInput, commentErrorDiv, "Комментарий не может быть пустым.");
+            hasErrors = true;
+        } else if (commentValue.length < 3) {
+            setFieldError(commentInput, commentErrorDiv, "Комментарий слишком короткий (минимум 3 символа).");
+            hasErrors = true;
+        } else if (commentValue.length > 800) {
+            setFieldError(commentInput, commentErrorDiv, "Комментарий не должен превышать 800 символов.");
+            hasErrors = true;
+        }
+        
+        // ---- если есть ошибки, прерываем выполнение, не создаём приветствие ----
+        if (hasErrors) {
+            // дополнительно: можно прокрутить до первой ошибки для удобства
+            const firstErrorField = document.querySelector('.error-msg:not(:empty)');
+            if (firstErrorField) {
+                firstErrorField.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }
+            return;
+        }
+        
+        // ----- ВСЕ ПОЛЯ ВАЛИДНЫ -> создаём приветствие с введёнными данными -----
+        // экранируем потенциально опасные символы (защита от XSS), используя textContent через создание элементов
+        // но мы создадим параграфы через безопасное присвоение textContent и innerHTML с экранированием.
+        // Так как используется современный подход, мы избегаем innerHTML для пользовательского контента,
+        // но можно создать элементы программно. Однако для красоты используем безопасное создание.
+        
+        // Очищаем контейнер и делаем его видимым
+        welcomeContainer.innerHTML = '';
+        
+        // Создаём блок приветствия (аналогичный дизайну)
+        const greetingDiv = document.createElement('div');
+        greetingDiv.className = 'welcome-card';
+        
+        // Заголовок приветствия
+        const titleGreet = document.createElement('p');
+        titleGreet.style.fontWeight = 'bold';
+        titleGreet.style.fontSize = '1.05rem';
+        titleGreet.style.marginBottom = '0.75rem';
+        titleGreet.innerHTML = `✨ Здравствуйте, <strong>${escapeHtml(nameValue)}</strong>! ✨`;
+        greetingDiv.appendChild(titleGreet);
+        
+        // Блок с email
+        const emailLine = document.createElement('p');
+        emailLine.innerHTML = `📧 <strong>Email:</strong> ${escapeHtml(emailValue)}`;
+        greetingDiv.appendChild(emailLine);
+        
+        // Блок с комментарием
+        const commentLine = document.createElement('p');
+        commentLine.innerHTML = `💬 <strong>Ваш комментарий:</strong> «${escapeHtml(commentValue)}»`;
+        greetingDiv.appendChild(commentLine);
+        
+        // дополнительная строка благодарности
+        const thanksLine = document.createElement('p');
+        thanksLine.style.marginTop = '0.6rem';
+        thanksLine.style.fontStyle = 'italic';
+        thanksLine.style.color = '#2c6e2c';
+        thanksLine.textContent = 'Спасибо за обращение! Мы свяжемся с вами в ближайшее время.';
+        greetingDiv.appendChild(thanksLine);
+        
+        welcomeContainer.appendChild(greetingDiv);
+        welcomeContainer.classList.remove('hidden');
+        
+        // (опционально) можно очистить поля формы после успешной отправки? 
+        // По условию задания не требуется очищать, но для удобства пользователя часто оставляют.
+        // Однако если пользователь захочет отправить ещё раз, данные останутся — это логично.
+        // Также можно автоматически скроллить к приветствию
+        welcomeContainer.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        
+        // маленький бонус: сбросить стили ошибок, если всё чисто (уже сбросили)
+        // звуков нет, всё корректно.
+    }
+    
+    // простая функция для экранирования HTML спецсимволов (безопасный вывод)
+    function escapeHtml(str) {
+        if (!str) return '';
+        return str
+            .replace(/&/g, '&amp;')
+            .replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;')
+            .replace(/"/g, '&quot;')
+            .replace(/'/g, '&#39;');
+    }
+    
+    // --- добавить дополнительную динамику: убирать ошибку при вводе (live-подсказки) ---
+    function setupLiveValidation() {
+        // при вводе в любое поле удаляем ошибку именно этого поля
+        nameInput.addEventListener('input', () => {
+            setFieldError(nameInput, nameErrorDiv, '');
+            // также можно сбросить цвет бордера при вводе
+            nameInput.style.borderColor = '';
+        });
+        emailInput.addEventListener('input', () => {
+            setFieldError(emailInput, emailErrorDiv, '');
+            emailInput.style.borderColor = '';
+        });
+        commentInput.addEventListener('input', () => {
+            setFieldError(commentInput, commentErrorDiv, '');
+            commentInput.style.borderColor = '';
+        });
+    }
+    
+    // вешаем событие отправки формы
+    form.addEventListener('submit', validateAndGreet);
+    
+    // активируем валидацию "на лету" — убираем ошибки при изменении поля (удобно)
+    setupLiveValidation();
+    
+    // дополнительный микро-фикс: если пользователь нажимает enter в любом поле,
+    // форма также проходит через наш обработчик submit, что корректно.
+    // Также, если потребуется очистка приветствия при новом клике (но лучше оставить так)
+    // строгий режим уже включён "use strict";
+    
+    // небольшое украшение: при загрузке фокусируемся на поле имени
+    window.addEventListener('DOMContentLoaded', () => {
+        nameInput.focus();
+    });
+</script>
+</body>
+</html>
